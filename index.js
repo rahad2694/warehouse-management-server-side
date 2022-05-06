@@ -17,10 +17,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run(){
     try{
-        const collection = client.db("wmsDb").collection("products");
+        const itemCollection = client.db("wmsDb").collection("products");
         await client.connect();
         console.log('DB Connected');
-
+        app.post('/additem',async(req,res)=>{
+            const newItem = req.body;
+            const result = await itemCollection.insertOne(newItem);
+        })
+        
     }
     finally{
         
