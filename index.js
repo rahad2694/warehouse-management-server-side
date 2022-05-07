@@ -11,7 +11,7 @@ app.use(cors());
 
 
 //MongoDb
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qqcx8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -31,6 +31,25 @@ async function run(){
             const cursor = itemCollection.find(query);
             const inventories = await cursor.toArray();
             res.send(inventories);
+        })
+        app.get('/iteminfo/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const info = await itemCollection.findOne(query);
+            console.log(info);
+            res.send(info);
+        })
+        app.put('/updateinfo/:id',async(req,res)=>{
+            const id = req.params.id;
+            const newInfo = req.body;
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert : true};
+            const updatedItem = {
+                $set:newInfo
+            };
+            const result = await itemCollection.updateOne(filter,updatedItem,options);
+            console.log(result);
+            res.send(result);
         })
         
     }
