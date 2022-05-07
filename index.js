@@ -22,7 +22,15 @@ async function run(){
         console.log('DB Connected');
         app.post('/additem',async(req,res)=>{
             const newItem = req.body;
+            console.log(newItem);
             const result = await itemCollection.insertOne(newItem);
+            res.send(result);
+        })
+        app.get('/inventories',async(req,res)=>{
+            const query = {};
+            const cursor = itemCollection.find(query);
+            const inventories = await cursor.toArray();
+            res.send(inventories);
         })
         
     }
