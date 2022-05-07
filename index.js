@@ -34,9 +34,10 @@ async function run(){
         })
         app.get('/iteminfo/:id',async(req,res)=>{
             const id = req.params.id;
+
             const query = {_id: ObjectId(id)};
             const info = await itemCollection.findOne(query);
-            console.log(info);
+            // console.log(info);
             res.send(info);
         })
         app.put('/updateinfo/:id',async(req,res)=>{
@@ -48,7 +49,14 @@ async function run(){
                 $set:newInfo
             };
             const result = await itemCollection.updateOne(filter,updatedItem,options);
-            console.log(result);
+            // console.log(result);
+            res.send(result);
+        })
+        
+        app.delete('/ietm/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await itemCollection.deleteOne(query);
             res.send(result);
         })
         
