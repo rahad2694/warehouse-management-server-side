@@ -32,6 +32,12 @@ async function run(){
             const inventories = await cursor.toArray();
             res.send(inventories);
         })
+        app.get('/homeinventories',async(req,res)=>{
+            const query = {};
+            const cursor = itemCollection.find(query);
+            const inventories = await cursor.limit(6).toArray();
+            res.send(inventories);
+        })
         app.get('/iteminfo/:id',async(req,res)=>{
             const id = req.params.id;
 
