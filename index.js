@@ -21,14 +21,8 @@ async function run() {
         const itemCollection = client.db("wmsDb").collection("products");
         await client.connect();
         console.log('DB Connected');
-        // app.post('/additem', async (req, res) => {
-        //     const newItem = req.body;
-        //     console.log(newItem);
-        //     const result = await itemCollection.insertOne(newItem);
-        //     res.send(result);
-        // })
 
-
+        //Add New item API (verified with jwt)
         app.post('/additem', async (req, res) => {
             const newItem = req.body;
             const accessTokenInfo = req.headers.authorization;
@@ -41,14 +35,14 @@ async function run() {
               res.send({ error: '403 ! Access Forbidden' });
             }
         })
-
-
+        // Getting All Items API
         app.get('/inventories', async (req, res) => {
             const query = {};
             const cursor = itemCollection.find(query);
             const inventories = await cursor.toArray();
             res.send(inventories);
         })
+        //Getting Customized user wise items API
         app.get('/myinventories', async (req, res) => {
             const email = req.query;
             const query = { email: email.email };
@@ -56,20 +50,22 @@ async function run() {
             const inventories = await cursor.toArray();
             res.send(inventories);
         })
+        //Limiting the data to 6 items for Home route in UI
         app.get('/homeinventories', async (req, res) => {
             const query = {};
             const cursor = itemCollection.find(query);
             const inventories = await cursor.limit(6).toArray();
             res.send(inventories);
         })
+        //Getting Individual item wise info API
         app.get('/iteminfo/:id', async (req, res) => {
             const id = req.params.id;
-
             const query = { _id: ObjectId(id) };
             const info = await itemCollection.findOne(query);
             // console.log(info);
             res.send(info);
         })
+        // Updating an existing entry API
         app.put('/updateinfo/:id', async (req, res) => {
             const id = req.params.id;
             const newInfo = req.body;
@@ -82,7 +78,7 @@ async function run() {
             // console.log(result);
             res.send(result);
         })
-
+        // Deleting an existing entry API
         app.delete('/ietm/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -90,10 +86,7 @@ async function run() {
             res.send(result);
         })
 
-
-        /* jwt start */
-
-
+        // JWT
         // generating decoded mail-token during login
         app.post('/login', async (req, res) => {
             const email = req.body;
@@ -101,7 +94,6 @@ async function run() {
             const accessToken = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
             res.send({ accessToken });
         });
-
 
         // verifying user with access token info
         function verifyToken(accessToken) {
@@ -115,7 +107,6 @@ async function run() {
           })
           return email;
         }
-
     }
     finally {
 
